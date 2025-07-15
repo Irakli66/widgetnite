@@ -121,22 +121,7 @@
     @apply bg-background text-foreground;
     font-family: var(--font-montserrat);
   }
-}
-
-.button {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.button:hover {
-  background-color: oklch(0.6 0.3 265);
-  box-shadow: 0 0 8px var(--primary);
-}
-
-.button:focus-visible {
-  outline: 2px solid var(--primary-foreground);
-  outline-offset: 2px;
+  html {
+    scroll-behavior: smooth;
+  }
 }
