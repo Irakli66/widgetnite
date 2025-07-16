@@ -5,6 +5,7 @@ import { User } from '@/lib/models';
 interface ProfileState {
   // User data
   userData: User | null;
+  userEmail: string | null; // Track which user this data belongs to
   
   // Loading states
   loading: boolean;
@@ -28,7 +29,7 @@ interface ProfileState {
 
 interface ProfileActions {
   // Data fetching
-  fetchUserData: () => Promise<void>;
+  fetchUserData: (userEmail: string) => Promise<void>;
   
   // Form management
   updateFormField: (field: string, value: string) => void;
@@ -43,6 +44,8 @@ interface ProfileActions {
   clearSuccess: () => void;
   setError: (error: string) => void;
   setSuccess: (message: string) => void;
+  clearStore: () => void;
+  checkAndClearIfDifferentUser: (currentUserEmail: string | null) => void;
   
   // Utility
   hasChanges: () => boolean;
@@ -50,26 +53,31 @@ interface ProfileActions {
 
 type ProfileStore = ProfileState & ProfileActions;
 
+const initialState: ProfileState = {
+  userData: null,
+  userEmail: null,
+  loading: false,
+  updating: false,
+  error: null,
+  success: null,
+  formData: {
+    faceit: '',
+    faceitId: '',
+    twitch: '',
+    kick: '',
+  },
+  formInitialized: false,
+};
+
 export const useProfileStore = create<ProfileStore>()(
   devtools(
     persist(
       (set, get) => ({
         // Initial state
-        userData: null,
-        loading: false,
-        updating: false,
-        error: null,
-        success: null,
-        formData: {
-          faceit: '',
-          faceitId: '',
-          twitch: '',
-          kick: '',
-        },
-        formInitialized: false,
+        ...initialState,
 
         // Actions
-        fetchUserData: async () => {
+        fetchUserData: async (userEmail: string) => {
           set({ loading: true, error: null });
           
           try {
@@ -87,9 +95,11 @@ export const useProfileStore = create<ProfileStore>()(
               
               set({
                 userData,
+                userEmail,
                 formData,
                 formInitialized: true,
                 loading: false,
+                error: null,
               });
             } else {
               set({
@@ -102,6 +112,16 @@ export const useProfileStore = create<ProfileStore>()(
               error: 'Network error occurred',
               loading: false,
             });
+          }
+        },
+
+        checkAndClearIfDifferentUser: (currentUserEmail: string | null) => {
+          const { userEmail } = get();
+          
+          // If stored user email doesn't match current user, clear everything
+          if (userEmail && userEmail !== currentUserEmail) {
+            console.log('User changed, clearing store:', userEmail, '->', currentUserEmail);
+            set(initialState);
           }
         },
 
@@ -181,6 +201,11 @@ export const useProfileStore = create<ProfileStore>()(
         clearSuccess: () => set({ success: null }),
         setError: (error: string) => set({ error }),
         setSuccess: (message: string) => set({ success: message }),
+        
+        clearStore: () => {
+          console.log('Clearing store');
+          set(initialState);
+        },
 
         hasChanges: () => {
           const { userData, formData } = get();
@@ -196,8 +221,11 @@ export const useProfileStore = create<ProfileStore>()(
       }),
       {
         name: 'profile-store',
-        // Only persist user data, not loading states or form data
-        partialize: (state) => ({ userData: state.userData }),
+        // Persist user data and email to track which user the data belongs to
+        partialize: (state) => ({ 
+          userData: state.userData,
+          userEmail: state.userEmail 
+        }),
       }
     ),
     {

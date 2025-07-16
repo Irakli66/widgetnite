@@ -41,6 +41,12 @@ export default function Settings() {
     await updateProfile();
   };
 
+  const handleRetry = () => {
+    if (session?.user?.email) {
+      fetchUserData(session.user.email);
+    }
+  };
+
   if (status === "loading") {
     return (
       <div className="flex items-center justify-center h-64">
@@ -74,7 +80,7 @@ export default function Settings() {
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-2 text-destructive">Error</h3>
           <p className="text-muted-foreground mb-4">{error}</p>
-          <Button onClick={fetchUserData} variant="outline">
+          <Button onClick={handleRetry} variant="outline">
             Retry
           </Button>
         </div>
