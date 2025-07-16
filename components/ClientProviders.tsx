@@ -3,6 +3,7 @@
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/providers/theme-provider";
 import ProfileProvider from "@/providers/profile-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 interface ClientProvidersProps {
   children: React.ReactNode;
@@ -17,7 +18,10 @@ export default function ClientProviders({ children }: ClientProvidersProps) {
         enableSystem
         disableTransitionOnChange
       >
-        <ProfileProvider>{children}</ProfileProvider>
+        <ProfileProvider>
+          {children}
+          <Toaster />
+        </ProfileProvider>
       </ThemeProvider>
     </SessionProvider>
   );

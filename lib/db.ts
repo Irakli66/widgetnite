@@ -1,10 +1,11 @@
 // lib/db.ts
 import { Kysely, PostgresDialect } from "kysely";
 import { Pool } from "pg";
-import { User } from "./models";
+import { User, Widget } from "./models";
 
 interface Database {
   users: User;
+  widgets: Widget;
 }
 
 const db = new Kysely<Database>({

@@ -5,13 +5,14 @@ import db from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   try {
+    // Get faceit username from URL params first (for OBS widget URLs)
     const { searchParams } = new URL(req.url);
-    let faceitUsername =
-      searchParams.get("username") || searchParams.get("nickname");
+    let faceitUsername = searchParams.get("username");
 
+    // If no username in params, try to get from authenticated user profile
     if (!faceitUsername) {
       const session = await getServerSession(authOptions);
-
+      
       if (!session?.user?.email) {
         return NextResponse.json(
           { error: "Username parameter required or authentication needed" },
@@ -27,10 +28,7 @@ export async function GET(req: NextRequest) {
 
       if (!user?.faceit) {
         return NextResponse.json(
-          {
-            error:
-              "No Faceit username found. Please set your Faceit username in settings or provide username parameter.",
-          },
+          { error: "No Faceit username found. Please set your Faceit username in settings or provide username parameter." },
           { status: 400 }
         );
       }
@@ -46,38 +44,53 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const response = await fetch(
-      `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(
-        faceitUsername
-      )}`,
+    // First, get the player ID from nickname
+    const playerResponse = await fetch(
+      `https://open.faceit.com/data/v4/players?nickname=${encodeURIComponent(faceitUsername)}`,
       {
-        method: "GET",
         headers: {
           Authorization: `Bearer ${apiKey}`,
-          Accept: "application/json",
         },
       }
     );
 
-    if (!response.ok) {
-      if (response.status === 404) {
+    if (!playerResponse.ok) {
+      if (playerResponse.status === 404) {
         return NextResponse.json(
-          { error: "Player not found" },
+          { error: "Faceit player not found" },
           { status: 404 }
         );
       }
-
       return NextResponse.json(
-        { error: "Failed to fetch player data from Faceit" },
-        { status: response.status }
+        { error: "Failed to fetch player data" },
+        { status: playerResponse.status }
       );
     }
 
-    const data = await response.json();
+    const playerData = await playerResponse.json();
+    const playerId = playerData.player_id;
 
-    return NextResponse.json(data);
+    // Now get the stats using the player ID
+    const statsResponse = await fetch(
+      `https://open.faceit.com/data/v4/players/${playerId}/stats/cs2`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      }
+    );
+
+    if (!statsResponse.ok) {
+      return NextResponse.json(
+        { error: "Failed to fetch stats data" },
+        { status: statsResponse.status }
+      );
+    }
+
+    const statsData = await statsResponse.json();
+    return NextResponse.json(statsData);
   } catch (error) {
-    console.error("Error fetching Faceit data:", error);
+    console.error("Error fetching Faceit stats:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
