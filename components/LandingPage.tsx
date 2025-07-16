@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { ThemeToggle } from "./ThemeToggle";
+import Header from "./Header";
 
 type FeatureCardProps = {
   icon: React.ComponentType<{ className?: string }>;
@@ -97,48 +97,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className=" border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Link href="#hero" className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Zap className="h-4 w-4" color="white" />
-                </div>
-                <span className="text-xl font-bold text-foreground">
-                  WidgetNite
-                </span>
-              </Link>
-            </motion.div>
-            <div className="flex gap-8">
-              <motion.nav
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="hidden md:flex items-center gap-8"
-              >
-                <Link
-                  href="#features"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Features
-                </Link>
-                <Link
-                  href="#platforms"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Platforms
-                </Link>
-              </motion.nav>
-              <ThemeToggle />
-            </div>
-          </div>
-        </div>
-      </header>
+
+      <Header />
 
       {/* Hero Section */}
       <section id="hero" className="relative overflow-hidden py-20 sm:py-32">
@@ -184,10 +144,12 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Button className="">
-                Get Started
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
+              <Link href="/dashboard">
+                <Button className="">
+                  Get Started
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
               <Button className="" variant="outline">
                 <Monitor className="h-4 w-4" />
                 Watch Demo

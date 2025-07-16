@@ -1,7 +1,7 @@
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Metadata } from "next";
-import { ThemeProvider } from "@/providers/theme-provider";
+import ClientProviders from "@/components/ClientProviders";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -22,9 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${montserrat.variable} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-        </ThemeProvider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
