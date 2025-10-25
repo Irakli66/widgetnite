@@ -41,25 +41,25 @@ const settingsItems: SettingsItem[] = [
     href: "/dashboard/settings",
     description: "Manage your account information",
   },
-  {
-    title: "Notifications",
-    icon: Bell,
-    href: "/#",
-    description: "Configure alert preferences",
-  },
-  {
-    title: "Privacy & Security",
-    icon: Shield,
-    href: "/#",
-    description: "Security and privacy settings",
-  },
-  {
-    title: "Help & Support",
-    icon: HelpCircle,
-    href: "/#",
-    description: "Get help and documentation",
-    external: true,
-  },
+  // {
+  //   title: "Notifications",
+  //   icon: Bell,
+  //   href: "/#",
+  //   description: "Configure alert preferences",
+  // },
+  // {
+  //   title: "Privacy & Security",
+  //   icon: Shield,
+  //   href: "/#",
+  //   description: "Security and privacy settings",
+  // },
+  // {
+  //   title: "Help & Support",
+  //   icon: HelpCircle,
+  //   href: "/#",
+  //   description: "Get help and documentation",
+  //   external: true,
+  // },
 ];
 
 export function DashboardSettings() {
