@@ -29,6 +29,13 @@ const navigationItems: NavigationItem[] = [
     icon: Target,
     href: "/dashboard/faceit",
     description: "Show CS2 stats and match history",
+    isNew: false,
+  },
+  {
+    title: "Clash Royale",
+    icon: Target,
+    href: "/dashboard/clash-royale",
+    description: "Show Clash Royale stats and match history",
     isNew: true,
   },
 ];

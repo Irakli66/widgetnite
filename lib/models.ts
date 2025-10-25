@@ -37,3 +37,35 @@ export interface WidgetFormatted {
   created_at: string;
   updated_at: string;
 }
+
+export interface ClashRoyaleChallenge {
+  id?: string;
+  user_id: string;
+  name: string;
+  win_goal: number;
+  max_losses: number;
+  current_wins?: number;
+  current_losses?: number;
+  best_wins?: number;
+  best_losses?: number;
+  total_attempts?: number;
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ClashRoyaleChallengeFormatted {
+  id: string;
+  userId: string;
+  name: string;
+  winGoal: number;
+  maxLosses: number;
+  currentWins: number;
+  currentLosses: number;
+  bestWins: number;
+  bestLosses: number;
+  totalAttempts: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
