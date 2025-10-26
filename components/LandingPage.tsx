@@ -280,11 +280,19 @@ export default function LandingPage() {
                 <Zap className="h-3 w-3" />
               </div>
               <span className="text-lg font-bold text-foreground">
-                WidgetNite
+                Widgets.tynite.live
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2025 WidgetNite. All rights reserved.
+              © 2025{" "}
+              <Link
+                href="https://tynite.live"
+                className="underline uppercase text-white"
+                target="_blank"
+              >
+                tynite.live
+              </Link>{" "}
+              All rights reserved.
             </p>
           </div>
         </div>
