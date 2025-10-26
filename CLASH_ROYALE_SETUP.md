@@ -54,3 +54,4 @@ Navigate to: `/dashboard/clash-royale`
 
 Widget updates in OBS automatically - no manual refresh needed!
 
+

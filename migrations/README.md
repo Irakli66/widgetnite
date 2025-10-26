@@ -69,3 +69,4 @@ The `clash_royale_challenges` table includes:
 - `created_at` - Timestamp of creation
 - `updated_at` - Timestamp of last update
 
+

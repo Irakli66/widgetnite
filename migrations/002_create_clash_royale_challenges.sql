@@ -21,3 +21,4 @@ CREATE INDEX IF NOT EXISTS idx_clash_royale_challenges_user_id ON clash_royale_c
 -- Create index on is_active for filtering active challenges
 CREATE INDEX IF NOT EXISTS idx_clash_royale_challenges_is_active ON clash_royale_challenges(is_active);
 
+

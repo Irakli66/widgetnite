@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Trophy, TrendingUp, Target } from "lucide-react";
+import { Trophy, TrendingUp, Target, X } from "lucide-react";
 import { ClashRoyaleChallengeFormatted } from "@/lib/models";
 
 function ClashRoyaleWidgetContent() {
@@ -103,6 +103,28 @@ function ClashRoyaleWidgetContent() {
             </p>
           </div>
 
+          {/* Loss Squares */}
+          <div className="px-6 pt-6 flex justify-center gap-3">
+            {Array.from({ length: challenge.maxLosses }, (_, index) => (
+              <motion.div
+                key={index}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.1 * index, type: "spring", stiffness: 200 }}
+                className="w-12 h-12 border-2 border-amber-400/60 rounded-lg flex items-center justify-center bg-zinc-900/40"
+              >
+                {challenge.currentLosses > index && (
+                  <motion.div
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <X className="w-8 h-8 text-red-500 stroke-[3]" />
+                  </motion.div>
+                )}
+              </motion.div>
+            ))}
+          </div>
           {/* Current Stats */}
           <div className="p-6 space-y-6">
             <motion.div
@@ -120,11 +142,8 @@ function ClashRoyaleWidgetContent() {
                   transition={{ type: "spring", stiffness: 200 }}
                   className="flex items-end gap-2"
                 >
-                  {/* Wins */}
+                  {/* Wins Progress */}
                   <div className="text-center">
-                    <div className="text-xs text-amber-400 font-semibold mb-1">
-                      W
-                    </div>
                     <span
                       className={`text-4xl font-bold ${
                         isAttemptOver
@@ -134,30 +153,12 @@ function ClashRoyaleWidgetContent() {
                     >
                       {challenge.currentWins}
                     </span>
-                  </div>
-
-                  {/* Separator */}
-                  <span
-                    className={`text-3xl font-bold pb-1 ${
-                      isAttemptOver ? "text-red-400" : "text-zinc-600"
-                    }`}
-                  >
-                    -
-                  </span>
-
-                  {/* Losses */}
-                  <div className="text-center">
-                    <div className="text-xs text-zinc-400 font-semibold mb-1">
-                      L
-                    </div>
                     <span
-                      className={`text-4xl font-bold ${
-                        isAttemptOver
-                          ? "text-red-400"
-                          : "text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-200"
+                      className={`text-3xl font-bold ${
+                        isAttemptOver ? "text-red-400" : "text-zinc-400"
                       }`}
                     >
-                      {challenge.currentLosses}
+                      /{challenge.winGoal}
                     </span>
                   </div>
                 </motion.div>
@@ -203,31 +204,13 @@ function ClashRoyaleWidgetContent() {
                   საუკეთესო შედეგი
                 </div>
                 {challenge.bestWins > 0 ? (
-                  <div className="flex items-end gap-1.5 ">
-                    {/* Wins */}
-                    <div className="text-center">
-                      <div className="text-[10px] text-amber-400 font-semibold mb-0.5">
-                        W
-                      </div>
-                      <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300">
-                        {challenge.bestWins}
-                      </span>
-                    </div>
-
-                    {/* Separator */}
-                    <span className="text-xl font-bold pb-0.5 text-zinc-600">
-                      -
+                  <div className="flex items-center justify-start h-[42px]">
+                    <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300">
+                      {challenge.bestWins}
                     </span>
-
-                    {/* Losses */}
-                    <div className="text-center">
-                      <div className="text-[10px] text-zinc-400 font-semibold mb-0.5">
-                        L
-                      </div>
-                      <span className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-300">
-                        {challenge.bestLosses}
-                      </span>
-                    </div>
+                    <span className="text-xl font-bold text-zinc-400">
+                      /{challenge.winGoal}
+                    </span>
                   </div>
                 ) : (
                   <div className="text-2xl font-bold text-zinc-500 text-center">

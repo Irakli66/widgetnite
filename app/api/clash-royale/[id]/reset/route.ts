@@ -42,6 +42,7 @@ export async function POST(
     };
 
     // If there were any wins/losses in current attempt, consider it a new attempt
+    // BUT only if the attempt hasn't already been counted (i.e., didn't reach max losses)
     if (currentWins > 0 || currentLosses > 0) {
       // Update best run if current is better
       if (currentWins > bestWins ||
@@ -49,7 +50,12 @@ export async function POST(
         updateData.best_wins = currentWins;
         updateData.best_losses = currentLosses;
       }
-      updateData.total_attempts = totalAttempts + 1;
+      
+      // Only increment total_attempts if the current attempt hasn't reached max losses
+      // (if it reached max losses, it was already counted in the lose endpoint)
+      if (currentLosses < challenge.max_losses) {
+        updateData.total_attempts = totalAttempts + 1;
+      }
     }
 
     const [updatedChallenge] = await db
