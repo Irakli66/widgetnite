@@ -1,15 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Settings,
-  LogOut,
-  User,
-  Bell,
-  Shield,
-  HelpCircle,
-  ExternalLink,
-} from "lucide-react";
+import { Settings, LogOut, User, ExternalLink } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupContent,

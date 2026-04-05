@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Target, ChevronRight, Zap } from "lucide-react";
+import { Target, ChevronRight, Zap, Coins } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -36,6 +36,13 @@ const navigationItems: NavigationItem[] = [
     icon: Target,
     href: "/dashboard/clash-royale",
     description: "Show Clash Royale stats and match history",
+    isNew: false,
+  },
+  {
+    title: "Bonus Hunt",
+    icon: Coins,
+    href: "/dashboard/bonus-hunt",
+    description: "Track slot bonus hunts and payouts",
     isNew: true,
   },
 ];

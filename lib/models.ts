@@ -69,3 +69,53 @@ export interface ClashRoyaleChallengeFormatted {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface BonusHunt {
+  id?: string;
+  user_id: string;
+  name: string;
+  start_balance: number;
+  status?: 'not_started' | 'in_progress' | 'ended';
+  current_slot_index?: number | null;
+  hunt_result?: 'profit' | 'no_profit' | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface BonusHuntFormatted {
+  id: string;
+  userId: string;
+  name: string;
+  startBalance: number;
+  status?: 'not_started' | 'in_progress' | 'ended';
+  currentSlotIndex?: number | null;
+  huntResult?: 'profit' | 'no_profit' | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BonusHuntSlot {
+  id?: string;
+  hunt_id: string;
+  slot_name: string;
+  bet_size: number;
+  payout: number | null;
+  position: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface BonusHuntSlotFormatted {
+  id: string;
+  huntId: string;
+  slotName: string;
+  betSize: number;
+  payout: number | null;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BonusHuntWithSlots extends BonusHuntFormatted {
+  slots: BonusHuntSlotFormatted[];
+}
