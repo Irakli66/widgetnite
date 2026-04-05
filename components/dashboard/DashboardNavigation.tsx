@@ -43,6 +43,13 @@ const navigationItems: NavigationItem[] = [
     icon: Coins,
     href: "/dashboard/bonus-hunt",
     description: "Track slot bonus hunts and payouts",
+    isNew: false,
+  },
+  {
+    title: "Slot Statistics",
+    icon: Target,
+    href: "/dashboard/slot-stats",
+    description: "View performance metrics for each slot game",
     isNew: true,
   },
 ];

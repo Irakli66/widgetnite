@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import HuntStats from "./HuntStats";
 import SlotList from "./SlotList";
 import EndHuntDialog from "./EndHuntDialog";
+import SlotGameCombobox from "./SlotGameCombobox";
 import {
   Dialog,
   DialogContent,
@@ -52,6 +53,7 @@ export default function BonusHuntManager({ huntId }: BonusHuntManagerProps) {
   const [editingBalance, setEditingBalance] = useState(false);
   const [balanceValue, setBalanceValue] = useState("");
   const [showEndHuntDialog, setShowEndHuntDialog] = useState(false);
+  const [selectedSlotGameId, setSelectedSlotGameId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchHunt(huntId);
@@ -74,9 +76,11 @@ export default function BonusHuntManager({ huntId }: BonusHuntManagerProps) {
       await addSlot(huntId, {
         slotName: slotForm.slotName,
         betSize: slotForm.betSize,
+        slotGameId: selectedSlotGameId,
       });
       toast.success("Slot added!");
       resetSlotForm();
+      setSelectedSlotGameId(null);
       setShowAddSlot(false);
     } catch {
       toast.error("Failed to add slot");
@@ -284,11 +288,13 @@ export default function BonusHuntManager({ huntId }: BonusHuntManagerProps) {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="slotName">Slot Name</Label>
-              <Input
-                id="slotName"
-                placeholder="e.g., Gates of Olympus"
+              <SlotGameCombobox
                 value={slotForm.slotName}
-                onChange={(e) => updateSlotField("slotName", e.target.value)}
+                onSelect={(slotGameId, name) => {
+                  setSelectedSlotGameId(slotGameId);
+                  updateSlotField("slotName", name);
+                }}
+                disabled={slotsLoading}
               />
             </div>
 

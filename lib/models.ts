@@ -101,6 +101,7 @@ export interface BonusHuntSlot {
   bet_size: number;
   payout: number | null;
   position: number;
+  slot_game_id?: string | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -112,10 +113,43 @@ export interface BonusHuntSlotFormatted {
   betSize: number;
   payout: number | null;
   position: number;
+  slotGameId?: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface BonusHuntWithSlots extends BonusHuntFormatted {
   slots: BonusHuntSlotFormatted[];
+}
+
+export interface SlotGame {
+  id?: string;
+  user_id: string;
+  name: string;
+  normalized_name: string;
+  times_played?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface SlotGameFormatted {
+  id: string;
+  userId: string;
+  name: string;
+  normalizedName: string;
+  timesPlayed: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SlotGameStats extends SlotGameFormatted {
+  totalBonuses: number;
+  openedBonuses: number;
+  bestMultiplier: number;
+  bestPayout: number;
+  avgMultiplier: number;
+  totalInvested: number;
+  totalWon: number;
+  netProfit: number;
+  lastPlayed: string | null;
 }

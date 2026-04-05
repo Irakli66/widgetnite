@@ -31,7 +31,7 @@ interface BonusHuntActions {
   startHunt: (huntId: string) => Promise<void>;
   endHunt: (huntId: string, result: 'profit' | 'no_profit') => Promise<void>;
   
-  addSlot: (huntId: string, slot: { slotName: string; betSize: number }) => Promise<void>;
+  addSlot: (huntId: string, slot: { slotName: string; betSize: number; slotGameId?: string | null }) => Promise<void>;
   updateSlot: (huntId: string, slotId: string, updates: { slotName?: string; betSize?: number; payout?: number | null }) => Promise<void>;
   deleteSlot: (huntId: string, slotId: string) => Promise<void>;
   reorderSlot: (huntId: string, slotId: string, direction: 'up' | 'down') => Promise<void>;
