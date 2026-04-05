@@ -25,9 +25,10 @@ import {
 
 interface BonusHuntManagerProps {
   huntId: string;
+  onHuntUpdate?: () => void;
 }
 
-export default function BonusHuntManager({ huntId }: BonusHuntManagerProps) {
+export default function BonusHuntManager({ huntId, onHuntUpdate }: BonusHuntManagerProps) {
   const router = useRouter();
   const {
     currentHunt,
@@ -82,6 +83,7 @@ export default function BonusHuntManager({ huntId }: BonusHuntManagerProps) {
       resetSlotForm();
       setSelectedSlotGameId(null);
       setShowAddSlot(false);
+      onHuntUpdate?.();
     } catch {
       toast.error("Failed to add slot");
     }
@@ -103,6 +105,7 @@ export default function BonusHuntManager({ huntId }: BonusHuntManagerProps) {
       await updateHunt(huntId, { startBalance: newBalance });
       setEditingBalance(false);
       toast.success("Start balance updated!");
+      onHuntUpdate?.();
     } catch {
       toast.error("Failed to update balance");
     }
@@ -113,10 +116,12 @@ export default function BonusHuntManager({ huntId }: BonusHuntManagerProps) {
     updates: { slotName?: string; betSize?: number; payout?: number | null }
   ) => {
     await updateSlot(huntId, slotId, updates);
+    onHuntUpdate?.();
   };
 
   const handleDeleteSlot = async (slotId: string) => {
     await deleteSlot(huntId, slotId);
+    onHuntUpdate?.();
   };
 
   const handleReorderSlot = async (
@@ -124,12 +129,14 @@ export default function BonusHuntManager({ huntId }: BonusHuntManagerProps) {
     direction: "up" | "down",
   ) => {
     await reorderSlot(huntId, slotId, direction);
+    onHuntUpdate?.();
   };
 
   const handleStartHunt = async () => {
     try {
       await startHunt(huntId);
       toast.success("Hunt started!");
+      onHuntUpdate?.();
     } catch {
       toast.error("Failed to start hunt");
     }
@@ -140,6 +147,7 @@ export default function BonusHuntManager({ huntId }: BonusHuntManagerProps) {
       await endHunt(huntId, result);
       toast.success(`Hunt ended - ${result === "profit" ? "Profit!" : "No Profit"}`);
       setShowEndHuntDialog(false);
+      onHuntUpdate?.();
     } catch {
       toast.error("Failed to end hunt");
     }

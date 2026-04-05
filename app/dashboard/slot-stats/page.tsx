@@ -3,8 +3,11 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Target } from "lucide-react";
+import { Target, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import SlotGameDetailsDialog from "@/components/bonus-hunt/SlotGameDetailsDialog";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -38,6 +41,7 @@ export default function SlotStatsPage() {
   const { data: session, status } = useSession();
   const [slotGames, setSlotGames] = useState<SlotGameStats[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sortField, setSortField] = useState<SortField>("totalBonuses");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -45,6 +49,15 @@ export default function SlotStatsPage() {
     id: string;
     name: string;
   } | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<{
+    open: boolean;
+    slotGameId: string;
+    slotGameName: string;
+  }>({
+    open: false,
+    slotGameId: "",
+    slotGameName: "",
+  });
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -76,6 +89,38 @@ export default function SlotStatsPage() {
     } else {
       setSortField(field);
       setSortDirection("desc");
+    }
+  };
+
+  const handleDeleteClick = (slotGameId: string, slotGameName: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent row click from triggering
+    setConfirmDelete({
+      open: true,
+      slotGameId,
+      slotGameName,
+    });
+  };
+
+  const confirmDeleteSlotGame = async () => {
+    try {
+      setDeleting(true);
+      const response = await fetch(`/api/slot-games/${confirmDelete.slotGameId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        toast.success("Slot game deleted successfully!");
+        setConfirmDelete({ open: false, slotGameId: "", slotGameName: "" });
+        fetchSlotGames(); // Refresh the list
+      } else {
+        const data = await response.json();
+        toast.error(data.error || "Failed to delete slot game");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("Failed to delete slot game");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -216,6 +261,7 @@ export default function SlotStatsPage() {
                         Net Profit
                         {sortField === "netProfit" && (sortDirection === "asc" ? " ↑" : " ↓")}
                       </TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -253,6 +299,17 @@ export default function SlotStatsPage() {
                         >
                           {game.netProfit >= 0 ? "+" : ""}${game.netProfit.toFixed(2)}
                         </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleDeleteClick(game.id, game.name, e)}
+                            disabled={deleting}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -268,6 +325,18 @@ export default function SlotStatsPage() {
         onOpenChange={(open) => !open && setSelectedSlotGame(null)}
         slotGameId={selectedSlotGame?.id || null}
         slotGameName={selectedSlotGame?.name || ""}
+      />
+
+      <ConfirmDialog
+        open={confirmDelete.open}
+        onOpenChange={(open) => setConfirmDelete((prev) => ({ ...prev, open }))}
+        title="Delete Slot Game"
+        description={`Are you sure you want to delete "${confirmDelete.slotGameName}"? This will remove all associated bonus data. This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+        loading={deleting}
+        onConfirm={confirmDeleteSlotGame}
       />
     </div>
   );

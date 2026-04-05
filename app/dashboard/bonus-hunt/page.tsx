@@ -193,7 +193,7 @@ function BonusHuntContent() {
   }
 
   if (huntId) {
-    return <BonusHuntManager huntId={huntId} />;
+    return <BonusHuntManager huntId={huntId} onHuntUpdate={fetchStats} />;
   }
 
   return (

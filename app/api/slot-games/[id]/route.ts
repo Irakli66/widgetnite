@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import db from "@/lib/db";
-import { SlotGameStats } from "@/lib/models";
 
-export async function GET(
+export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -30,12 +29,11 @@ export async function GET(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Get the slot game
+    // Verify ownership of the slot game
     const slotGame = await db
       .selectFrom("slot_games")
-      .selectAll()
+      .select(["id", "user_id"])
       .where("id", "=", id)
-      .where("user_id", "=", user.id)
       .executeTakeFirst();
 
     if (!slotGame) {
@@ -45,72 +43,24 @@ export async function GET(
       );
     }
 
-    // Get all slots linked to this game
-    const gameSlots = await db
-      .selectFrom("bonus_hunt_slots")
-      .selectAll()
-      .where("slot_game_id", "=", id)
+    if (slotGame.user_id !== user.id) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 403 }
+      );
+    }
+
+    // Delete the slot game (cascade will handle bonus_hunt_slots)
+    await db
+      .deleteFrom("slot_games")
+      .where("id", "=", id)
       .execute();
 
-    const openedSlots = gameSlots.filter((s) => s.payout !== null);
-
-    const totalBonuses = gameSlots.length;
-    const openedBonuses = openedSlots.length;
-    const totalInvested = gameSlots.reduce(
-      (sum, s) => sum + Number(s.bet_size),
-      0
-    );
-    const totalWon = openedSlots.reduce((sum, s) => sum + Number(s.payout), 0);
-
-    const bestPayout =
-      openedSlots.length > 0
-        ? Math.max(...openedSlots.map((s) => Number(s.payout)))
-        : 0;
-
-    const bestMultiplier =
-      openedSlots.length > 0
-        ? Math.max(
-            ...openedSlots.map(
-              (s) => Number(s.payout) / Number(s.bet_size)
-            )
-          )
-        : 0;
-
-    const avgMultiplier =
-      openedSlots.length > 0
-        ? openedSlots.reduce(
-            (sum, s) => sum + Number(s.payout) / Number(s.bet_size),
-            0
-          ) / openedSlots.length
-        : 0;
-
-    const lastPlayedSlot = gameSlots.sort(
-      (a, b) =>
-        new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime()
-    )[0];
-
-    const stats: SlotGameStats = {
-      id: slotGame.id!,
-      userId: slotGame.user_id,
-      name: slotGame.name,
-      normalizedName: slotGame.normalized_name,
-      timesPlayed: slotGame.times_played || 0,
-      createdAt: slotGame.created_at!,
-      updatedAt: slotGame.updated_at!,
-      totalBonuses,
-      openedBonuses,
-      bestMultiplier,
-      bestPayout,
-      avgMultiplier,
-      totalInvested,
-      totalWon,
-      netProfit: totalWon - totalInvested,
-      lastPlayed: lastPlayedSlot ? lastPlayedSlot.created_at! : null,
-    };
-
-    return NextResponse.json({ slotGame: stats });
+    return NextResponse.json({
+      message: "Slot game deleted successfully",
+    });
   } catch (error) {
-    console.error("Error fetching slot game details:", error);
+    console.error("Error deleting slot game:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
