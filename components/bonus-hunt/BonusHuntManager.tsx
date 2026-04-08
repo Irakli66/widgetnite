@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useBonusHuntStore } from "@/store/useBonusHuntStore";
+import { BonusHuntSlotFormatted } from "@/lib/models";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -124,12 +125,28 @@ export default function BonusHuntManager({ huntId, onHuntUpdate }: BonusHuntMana
     onHuntUpdate?.();
   };
 
-  const handleReorderSlot = async (
-    slotId: string,
-    direction: "up" | "down",
+  const handleReorderSlots = async (
+    newOrder: BonusHuntSlotFormatted[]
   ) => {
-    await reorderSlot(huntId, slotId, direction);
-    onHuntUpdate?.();
+    try {
+      // Send new order to server
+      const response = await fetch(`/api/bonus-hunt/${huntId}/slots/reorder`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slotIds: newOrder.map((s) => s.id) }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to reorder");
+      }
+      
+      // Refresh the hunt data
+      await fetchHunt(huntId);
+      onHuntUpdate?.();
+    } catch (error) {
+      console.error("Failed to reorder slots:", error);
+      throw error;
+    }
   };
 
   const handleStartHunt = async () => {
@@ -278,7 +295,7 @@ export default function BonusHuntManager({ huntId, onHuntUpdate }: BonusHuntMana
             huntId={huntId}
             onUpdateSlot={handleUpdateSlot}
             onDeleteSlot={handleDeleteSlot}
-            onReorderSlot={handleReorderSlot}
+            onReorderSlots={handleReorderSlots}
             updating={slotsLoading}
           />
         </CardContent>
