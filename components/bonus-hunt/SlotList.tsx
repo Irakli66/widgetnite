@@ -13,6 +13,7 @@ import {
   Check,
   X,
   DollarSign,
+  Star,
 } from "lucide-react";
 import { toast } from "sonner";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
@@ -22,7 +23,7 @@ interface SlotListProps {
   huntId: string;
   onUpdateSlot: (
     slotId: string,
-    updates: { slotName?: string; betSize?: number; payout?: number | null }
+    updates: { slotName?: string; betSize?: number; payout?: number | null; isSuper?: boolean }
   ) => Promise<void>;
   onDeleteSlot: (slotId: string) => Promise<void>;
   onReorderSlot: (slotId: string, direction: "up" | "down") => Promise<void>;
@@ -103,6 +104,15 @@ export default function SlotList({
     }
   };
 
+  const handleToggleSuper = async (slotId: string, currentValue: boolean) => {
+    try {
+      await onUpdateSlot(slotId, { isSuper: !currentValue });
+      toast.success(!currentValue ? "Marked as Super Bonus!" : "Unmarked as Super Bonus");
+    } catch {
+      toast.error("Failed to update super status");
+    }
+  };
+
   if (slots.length === 0) {
     return (
       <Card className="relative">
@@ -170,7 +180,25 @@ export default function SlotList({
                   </div>
 
                   <div className="flex-1">
-                    <div className="font-semibold">{slot.slotName}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="font-semibold">{slot.slotName}</div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleToggleSuper(slot.id, slot.isSuper || false)}
+                        disabled={updating}
+                        className="h-6 w-6 p-0"
+                        title={slot.isSuper ? "Unmark as Super Bonus" : "Mark as Super Bonus"}
+                      >
+                        <Star
+                          className={`h-4 w-4 ${
+                            slot.isSuper
+                              ? "fill-red-500 text-red-500"
+                              : "text-muted-foreground"
+                          }`}
+                        />
+                      </Button>
+                    </div>
                     <div className="text-sm text-muted-foreground">
                       Bet: ${slot.betSize.toFixed(2)}
                     </div>

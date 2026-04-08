@@ -21,7 +21,7 @@ export async function PATCH(
 
     const { id, slotId } = await params;
     const body = await req.json();
-    const { slotName, betSize, payout } = body;
+    const { slotName, betSize, payout, isSuper } = body;
 
     const slot = await db
       .selectFrom("bonus_hunt_slots")
@@ -53,12 +53,13 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const updates: Partial<{ slot_name: string; bet_size: number; payout: number | null; updated_at: string }> = { 
+    const updates: Partial<{ slot_name: string; bet_size: number; payout: number | null; is_super: boolean; updated_at: string }> = { 
       updated_at: new Date().toISOString() 
     };
     if (slotName !== undefined) updates.slot_name = slotName;
     if (betSize !== undefined) updates.bet_size = betSize;
     if (payout !== undefined) updates.payout = payout;
+    if (isSuper !== undefined) updates.is_super = isSuper;
 
     const [updatedSlot] = await db
       .updateTable("bonus_hunt_slots")
@@ -71,6 +72,8 @@ export async function PATCH(
         "bet_size",
         "payout",
         "position",
+        "slot_game_id",
+        "is_super",
         "created_at",
         "updated_at",
       ])
@@ -115,6 +118,8 @@ export async function PATCH(
       betSize: Number(updatedSlot.bet_size),
       payout: updatedSlot.payout ? Number(updatedSlot.payout) : null,
       position: updatedSlot.position,
+      slotGameId: updatedSlot.slot_game_id,
+      isSuper: updatedSlot.is_super || false,
       createdAt: updatedSlot.created_at!,
       updatedAt: updatedSlot.updated_at!,
     };

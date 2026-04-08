@@ -97,7 +97,9 @@ export default function BonusHuntWidget({ huntId }: BonusHuntWidgetProps) {
         : "N/A";
 
   // Enable scrolling if status is "not_started" OR "ended" AND there are more than 3 slots
-  const shouldScroll = (hunt?.status === "not_started" || hunt?.status === "ended") && hunt.slots.length > 3;
+  const shouldScroll =
+    (hunt?.status === "not_started" || hunt?.status === "ended") &&
+    hunt.slots.length > 3;
   const isInProgress = hunt?.status === "in_progress";
 
   // Calculate animation duration based on number of slots (3 seconds per slot)
@@ -114,7 +116,7 @@ export default function BonusHuntWidget({ huntId }: BonusHuntWidgetProps) {
 
     // Calculate the start of the 3-slot window
     let startIndex = Math.max(0, currentIndex - 1);
-    
+
     // Adjust if we're near the end
     if (startIndex + 3 > totalSlots) {
       startIndex = totalSlots - 3;
@@ -222,7 +224,9 @@ export default function BonusHuntWidget({ huntId }: BonusHuntWidgetProps) {
         </div>
 
         {/* Table Rows */}
-        <div className={`bg-black relative ${shouldScroll || (isInProgress && hunt.slots.length > 3) ? "h-[150px] overflow-hidden" : ""}`}>
+        <div
+          className={`bg-black relative ${shouldScroll || (isInProgress && hunt.slots.length > 3) ? "h-[150px] overflow-hidden" : ""}`}
+        >
           {hunt.slots.length === 0 ? (
             <div className="py-8 text-center text-white/30">
               No slots added yet
@@ -230,19 +234,23 @@ export default function BonusHuntWidget({ huntId }: BonusHuntWidgetProps) {
           ) : (
             <motion.div
               className={shouldScroll ? "absolute top-0 left-0 right-0" : ""}
-              animate={shouldScroll ? {
-                y: [0, "-50%"]
-              } : {}}
+              animate={
+                shouldScroll
+                  ? {
+                      y: [0, "-50%"],
+                    }
+                  : {}
+              }
               transition={{
                 duration: animationDuration,
                 repeat: shouldScroll ? Infinity : 0,
-                ease: "linear"
+                ease: "linear",
               }}
             >
               {/* Render slots based on status */}
               {visibleSlots.map((slot, visibleIndex) => {
                 // Get the actual index in the full slots array
-                const index = hunt.slots.findIndex(s => s.id === slot.id);
+                const index = hunt.slots.findIndex((s) => s.id === slot.id);
                 const isOpened = slot.payout !== null;
                 const isCurrentSlot =
                   isInProgress && hunt.currentSlotIndex === index;
@@ -255,8 +263,8 @@ export default function BonusHuntWidget({ huntId }: BonusHuntWidgetProps) {
                         ? "border-b border-white/5"
                         : ""
                     } ${
-                      isCurrentSlot 
-                        ? "bg-[#FFBF00]/[0.08] border-l-2 border-[#FFBF00]/60" 
+                      isCurrentSlot
+                        ? "bg-[#FFBF00]/[0.08] border-l-2 border-[#FFBF00]/60"
                         : ""
                     }`}
                   >
@@ -273,7 +281,7 @@ export default function BonusHuntWidget({ huntId }: BonusHuntWidgetProps) {
                     </div>
 
                     <div
-                      className={`text-base font-medium ${
+                      className={`text-base font-medium flex items-center gap-2 ${
                         isCurrentSlot
                           ? "text-white font-bold"
                           : isOpened
@@ -281,7 +289,12 @@ export default function BonusHuntWidget({ huntId }: BonusHuntWidgetProps) {
                             : "text-white/40"
                       }`}
                     >
-                      {slot.slotName}
+                      <span>{slot.slotName}</span>
+                      {slot.isSuper && (
+                        <span className="text-[9px] font-bold text-red-500 border border-red-500 px-1 py-0.5 rounded leading-none">
+                          SUPER
+                        </span>
+                      )}
                     </div>
 
                     <div
@@ -311,7 +324,8 @@ export default function BonusHuntWidget({ huntId }: BonusHuntWidgetProps) {
                 );
               })}
               {/* Duplicate slots for seamless loop when scrolling (only for not_started) */}
-              {shouldScroll && !isInProgress &&
+              {shouldScroll &&
+                !isInProgress &&
                 hunt.slots.map((slot, index) => {
                   const isOpened = slot.payout !== null;
 
@@ -331,9 +345,14 @@ export default function BonusHuntWidget({ huntId }: BonusHuntWidgetProps) {
                       </div>
 
                       <div
-                        className={`text-base font-medium ${isOpened ? "text-white" : "text-white/40"}`}
+                        className={`text-base font-medium flex items-center gap-2 ${isOpened ? "text-white" : "text-white/40"}`}
                       >
-                        {slot.slotName}
+                        <span>{slot.slotName}</span>
+                        {slot.isSuper && (
+                          <span className="text-[9px] font-bold text-red-500 border border-red-500 px-1 py-0.5 rounded leading-none">
+                            SUPER
+                          </span>
+                        )}
                       </div>
 
                       <div

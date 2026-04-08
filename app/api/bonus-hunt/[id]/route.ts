@@ -46,6 +46,8 @@ export async function GET(
       betSize: Number(s.bet_size),
       payout: s.payout ? Number(s.payout) : null,
       position: s.position,
+      slotGameId: s.slot_game_id,
+      isSuper: s.is_super || false,
       createdAt: s.created_at!,
       updatedAt: s.updated_at!,
     }));

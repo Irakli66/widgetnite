@@ -114,6 +114,7 @@ export async function POST(
         bet_size: betSize,
         position: nextPosition,
         slot_game_id: finalSlotGameId,
+        is_super: false,
       })
       .returningAll()
       .execute();
@@ -126,6 +127,7 @@ export async function POST(
       payout: slot.payout ? Number(slot.payout) : null,
       position: slot.position,
       slotGameId: slot.slot_game_id,
+      isSuper: slot.is_super || false,
       createdAt: slot.created_at!,
       updatedAt: slot.updated_at!,
     };

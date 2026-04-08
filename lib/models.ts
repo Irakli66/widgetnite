@@ -102,6 +102,7 @@ export interface BonusHuntSlot {
   payout: number | null;
   position: number;
   slot_game_id?: string | null;
+  is_super?: boolean;
   created_at?: string;
   updated_at?: string;
 }
@@ -114,6 +115,7 @@ export interface BonusHuntSlotFormatted {
   payout: number | null;
   position: number;
   slotGameId?: string | null;
+  isSuper?: boolean;
   createdAt: string;
   updatedAt: string;
 }

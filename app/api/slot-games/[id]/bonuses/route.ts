@@ -53,6 +53,7 @@ export async function GET(
         "bonus_hunts.name as hunt_name",
         "bonus_hunt_slots.bet_size",
         "bonus_hunt_slots.payout",
+        "bonus_hunt_slots.is_super",
         "bonus_hunt_slots.created_at",
       ])
       .where("bonus_hunt_slots.slot_game_id", "=", id)
@@ -66,6 +67,7 @@ export async function GET(
       payout: b.payout ? Number(b.payout) : null,
       multiplier:
         b.payout !== null ? Number(b.payout) / Number(b.bet_size) : null,
+      isSuper: b.is_super || false,
       createdAt: b.created_at!,
     }));
 

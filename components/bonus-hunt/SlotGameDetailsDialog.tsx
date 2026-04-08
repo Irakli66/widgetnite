@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Calendar } from "lucide-react";
+import { Calendar, Star } from "lucide-react";
 
 interface BonusDetail {
   id: string;
@@ -25,6 +25,7 @@ interface BonusDetail {
   betSize: number;
   payout: number | null;
   multiplier: number | null;
+  isSuper: boolean;
   createdAt: string;
 }
 
@@ -92,6 +93,7 @@ export default function SlotGameDetailsDialog({
               <TableHeader>
                 <TableRow>
                   <TableHead>Hunt</TableHead>
+                  <TableHead className="text-center w-16">Super</TableHead>
                   <TableHead className="text-right">Bet Size</TableHead>
                   <TableHead className="text-right">Payout</TableHead>
                   <TableHead className="text-right">Multi</TableHead>
@@ -102,6 +104,11 @@ export default function SlotGameDetailsDialog({
                 {bonuses.map((bonus) => (
                   <TableRow key={bonus.id}>
                     <TableCell className="font-medium">{bonus.huntName}</TableCell>
+                    <TableCell className="text-center">
+                      {bonus.isSuper && (
+                        <Star className="h-4 w-4 fill-red-500 text-red-500 inline-block" />
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">
                       ${bonus.betSize.toFixed(2)}
                     </TableCell>

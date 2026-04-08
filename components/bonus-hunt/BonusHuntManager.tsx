@@ -113,7 +113,7 @@ export default function BonusHuntManager({ huntId, onHuntUpdate }: BonusHuntMana
 
   const handleUpdateSlot = async (
     slotId: string,
-    updates: { slotName?: string; betSize?: number; payout?: number | null }
+    updates: { slotName?: string; betSize?: number; payout?: number | null; isSuper?: boolean }
   ) => {
     await updateSlot(huntId, slotId, updates);
     onHuntUpdate?.();
